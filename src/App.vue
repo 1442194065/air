@@ -1,26 +1,24 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div id="app">
+        <Header />
+        <main>
+            <Home />  <!-- 你将放置可视化图表和数据交互的页面 -->
+        </main>
+        <Footer />
+    </div>
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
-
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+<script setup>
+    import Header from './components/AppHeader.vue'
+    import Home from './views/HomePage.vue'
+    import Footer from './components/AppFooter.vue'
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+    #app {
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        text-align: center;
+        color: #2c3e50;
+        margin-top: 60px;
+    }
 </style>
