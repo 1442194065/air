@@ -1,123 +1,111 @@
 <template>
     <div class="home">
         <div class="filters">
-            <label for="city">选择城市：</label>
-            <select v-model="city" @change="fetchWeatherData">
-                <option v-for="cityName in cities" :key="cityName" :value="cityName">
-                    {{ cityName }}
-                </option>
-            </select>
-            <button @click="fetchWeatherData">获取天气数据</button>
+            <label for="date">选择日期范围：</label>
+            <input type="date" v-model="startDate" />
+            <input type="date" v-model="endDate" />
+            <button @click="filterData">筛选数据</button>
         </div>
 
-        <Weather v-if="weatherData" :data="weatherData" />
-
-        <div class="chart-container" v-if="chartData.length">
+        <div class="chart-container">
             <div ref="chart" class="chart"></div>
         </div>
+
+        <RealTimeAirQuality />
+
     </div>
 </template>
 
+<!-- <script>
+    export default {
+        name: 'HomePage'  // 修改组件名
+    }
+</script> -->
+
 <script setup>
-    import { ref, onMounted,watch } from 'vue'
-    import * as echarts from 'echarts'
-    import Weather from '../components/AppWeather.vue'
-    import axios from 'axios'
+import { ref, onMounted} from 'vue'
+import * as echarts from 'echarts'
+import RealTimeAirQuality from '../components/RealTimeAirQuality.vue'
 
-    const cities = ref(['shanghai', 'beijing', 'guangzhou', 'chengdu', 'shenzhen']) // 添加多个城市
-    const city = ref(cities.value[0]) // 默认选择第一个城市
-    const weatherData = ref(null)
-    const chart = ref(null)
-    const chartInstance = ref(null) // 保存图表实例
-    const chartData = ref([])
+const airQualityData = [
+  { date: '2024-01-01', pm25: 45, pm10: 60, co: 0.4, lat: 39.9, lon: 116.4 },
+  { date: '2024-01-02', pm25: 50, pm10: 55, co: 0.3, lat: 39.92, lon: 116.38 },
+  // 更多数据...
+]
 
-    // 获取天气数据
-    const fetchWeatherData = async () => {
-        try {
-            const response = await axios.get(`https://api.waqi.info/feed/${city.value}/?token=demo`)
-            if (response.data.status === 'ok') {
-                weatherData.value = response.data.data
-                prepareChartData(response.data.data.forecast.daily)
-            } else {
-                alert('获取数据失败：' + response.data.message)
-            }
-        } catch (error) {
-            console.error('请求失败:', error)
-        }
+const startDate = ref('2024-01-01')
+const endDate = ref('2024-01-05')
+const chart = ref(null)
+
+const filterData = () => {
+  const filteredData = airQualityData.filter(item => item.date >= startDate.value && item.date <= endDate.value)
+  renderChart(filteredData)
+}
+
+const renderChart = (data) => {
+  const dates = data.map(item => item.date)
+  const pm25 = data.map(item => item.pm25)
+  const pm10 = data.map(item => item.pm10)
+  const co = data.map(item => item.co)
+  // const latitudes = data.map(item => item.lat)
+  // const longitudes = data.map(item => item.lon)
+
+  const myChart = echarts.init(chart.value)
+
+  const option = {
+    title: {
+      text: '空气质量指数 (PM2.5, PM10, CO)',
+    },
+    tooltip: {
+      trigger: 'axis',
+    },
+    legend: {
+      data: ['PM2.5', 'PM10', 'CO'],
+    },
+    xAxis: {
+      type: 'category',
+      data: dates,
+    },
+    yAxis: {
+      type: 'value',
+    },
+    series: [
+      {
+        name: 'PM2.5',
+        data: pm25,
+        type: 'line',
+        smooth: true,
+      },
+      {
+        name: 'PM10',
+        data: pm10,
+        type: 'line',
+        smooth: true,
+      },
+      {
+        name: 'CO',
+        data: co,
+        type: 'line',
+        smooth: true,
+      },
+    ],
+    // 热力图展示示例
+    visualMap: {
+      min: 0,
+      max: 100,
+      type: 'continuous',
+      inRange: {
+        color: ['blue', 'green', 'yellow', 'red'],
+      },
     }
+  }
 
-    // 监听 city 的变化，实时更新天气数据
-    watch(city, () => {
-        fetchWeatherData()
-    })
+  myChart.setOption(option)
+}
 
-    // 准备并渲染图表数据
-    const prepareChartData = (forecast) => {
-        chartData.value = [
-            {
-                name: 'PM2.5',
-                data: forecast.pm25.map(day => ({ date: day.day, value: day.avg })),
-            },
-            {
-                name: 'PM10',
-                data: forecast.pm10.map(day => ({ date: day.day, value: day.avg })),
-            },
-            {
-                name: 'O3',
-                data: forecast.o3.map(day => ({ date: day.day, value: day.avg })),
-            }
-        ]
-        renderChart(chartData.value)
-    }
-    
-
-    const renderChart = (data) => {
-        if (!chart.value) return
-
-        // 如果图表实例存在，清除之前的实例
-        if (chartInstance.value) {
-            chartInstance.value.dispose()
-            
-        }
-
-        chartInstance.value = echarts.init(chart.value) // 重新初始化图表
-
-        const dates = data[0].data.map(item => item.date) // 统一取日期
-        const series = data.map(item => ({
-            name: item.name,
-            type: 'line',
-            smooth: true,
-            data: item.data.map(point => point.value)
-        }))
-        
-        const myChart = echarts.init(chart.value)
-
-        const option = {
-            title: {
-                text: `${city.value} 空气质量数据`,
-            },
-            tooltip: {
-                trigger: 'axis',
-            },
-            legend: {
-                data: data.map(item => item.name),
-            },
-            xAxis: {
-                type: 'category',
-                data: dates,
-            },
-            yAxis: {
-                type: 'value',
-            },
-            series: series,
-        }
-
-        myChart.setOption(option)
-    }
-
-    onMounted(() => {
-        fetchWeatherData()
-    })
+onMounted(() => {
+  renderChart(airQualityData)
+})
 </script>
 
 <style scoped>
@@ -139,3 +127,4 @@
         height: 100%;
     }
 </style>
+
