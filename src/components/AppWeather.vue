@@ -12,28 +12,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
-
-const weatherData = ref(null);
-const city = 'shanghai'; // 替换为需要的城市
-    const token = 'c687d5338fc964e72be3c4767e54cb07cf94287b'; // 替换为你的API token
-
-const fetchWeatherData = async () => {
-  try {
-    const response = await axios.get(`https://api.waqi.info/feed/${city}/?token=${token}`);
-    if (response.data.status === 'ok') {
-      weatherData.value = response.data.data;
-    } else {
-      console.error('API Error:', response.data.message);
-    }
-  } catch (error) {
-    console.error('Network Error:', error);
-  }
-};
-
-onMounted(fetchWeatherData);
+    import { defineProps } from 'vue'; // 确保导入 defineProps
+    defineProps({
+        weatherData: {
+            type: Object,
+            required: true,
+        }
+    })
 </script>
+
 
 <style scoped>
     .weather-container {

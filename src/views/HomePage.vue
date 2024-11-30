@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-    import { ref, onMounted } from 'vue'
+    import { ref, onMounted,watch } from 'vue'
     import * as echarts from 'echarts'
     import Weather from '../components/AppWeather.vue'
     import axios from 'axios'
@@ -44,6 +44,11 @@
             console.error('请求失败:', error)
         }
     }
+
+    // 监听 city 的变化，实时更新天气数据
+    watch(city, () => {
+        fetchWeatherData()
+    })
 
     // 准备并渲染图表数据
     const prepareChartData = (forecast) => {
