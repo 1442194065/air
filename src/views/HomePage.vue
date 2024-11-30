@@ -28,6 +28,7 @@
     const city = ref(cities.value[0]) // 默认选择第一个城市
     const weatherData = ref(null)
     const chart = ref(null)
+    const chartInstance = ref(null) // 保存图表实例
     const chartData = ref([])
 
     // 获取天气数据
@@ -68,8 +69,19 @@
         ]
         renderChart(chartData.value)
     }
+    
 
     const renderChart = (data) => {
+        if (!chart.value) return
+
+        // 如果图表实例存在，清除之前的实例
+        if (chartInstance.value) {
+            chartInstance.value.dispose()
+            
+        }
+
+        chartInstance.value = echarts.init(chart.value) // 重新初始化图表
+
         const dates = data[0].data.map(item => item.date) // 统一取日期
         const series = data.map(item => ({
             name: item.name,
@@ -77,7 +89,7 @@
             smooth: true,
             data: item.data.map(point => point.value)
         }))
-
+        
         const myChart = echarts.init(chart.value)
 
         const option = {
