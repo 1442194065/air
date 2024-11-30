@@ -2,7 +2,11 @@
     <div class="home">
         <div class="filters">
             <label for="city">选择城市：</label>
-            <input type="text" v-model="city" placeholder="输入城市名称" />
+            <select v-model="city" @change="fetchWeatherData">
+                <option v-for="cityName in cities" :key="cityName" :value="cityName">
+                    {{ cityName }}
+                </option>
+            </select>
             <button @click="fetchWeatherData">获取天气数据</button>
         </div>
 
@@ -20,7 +24,8 @@
     import Weather from '../components/AppWeather.vue'
     import axios from 'axios'
 
-    const city = ref('shanghai')
+    const cities = ref(['shanghai', 'beijing', 'guangzhou', 'chengdu', 'shenzhen']) // 添加多个城市
+    const city = ref(cities.value[0]) // 默认选择第一个城市
     const weatherData = ref(null)
     const chart = ref(null)
     const chartData = ref([])
@@ -42,25 +47,43 @@
 
     // 准备并渲染图表数据
     const prepareChartData = (forecast) => {
-        chartData.value = forecast.pm25.map(day => ({
-            date: day.day,
-            value: day.avg,
-        }))
+        chartData.value = [
+            {
+                name: 'PM2.5',
+                data: forecast.pm25.map(day => ({ date: day.day, value: day.avg })),
+            },
+            {
+                name: 'PM10',
+                data: forecast.pm10.map(day => ({ date: day.day, value: day.avg })),
+            },
+            {
+                name: 'O3',
+                data: forecast.o3.map(day => ({ date: day.day, value: day.avg })),
+            }
+        ]
         renderChart(chartData.value)
     }
 
     const renderChart = (data) => {
-        const dates = data.map(item => item.date)
-        const values = data.map(item => item.value)
+        const dates = data[0].data.map(item => item.date) // 统一取日期
+        const series = data.map(item => ({
+            name: item.name,
+            type: 'line',
+            smooth: true,
+            data: item.data.map(point => point.value)
+        }))
 
         const myChart = echarts.init(chart.value)
 
         const option = {
             title: {
-                text: 'PM2.5 预测',
+                text: `${city.value} 空气质量数据`,
             },
             tooltip: {
                 trigger: 'axis',
+            },
+            legend: {
+                data: data.map(item => item.name),
             },
             xAxis: {
                 type: 'category',
@@ -69,14 +92,7 @@
             yAxis: {
                 type: 'value',
             },
-            series: [
-                {
-                    name: 'PM2.5',
-                    data: values,
-                    type: 'line',
-                    smooth: true,
-                },
-            ],
+            series: series,
         }
 
         myChart.setOption(option)
