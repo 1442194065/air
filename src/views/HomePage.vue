@@ -1,107 +1,90 @@
 <template>
     <div class="home">
         <div class="filters">
-            <label for="date">选择日期范围：</label>
-            <input type="date" v-model="startDate" />
-            <input type="date" v-model="endDate" />
-            <button @click="filterData">筛选数据</button>
+            <label for="city">选择城市：</label>
+            <input type="text" v-model="city" placeholder="输入城市名称" />
+            <button @click="fetchWeatherData">获取天气数据</button>
         </div>
 
-        <div class="chart-container">
+        <Weather v-if="weatherData" :data="weatherData" />
+
+        <div class="chart-container" v-if="chartData.length">
             <div ref="chart" class="chart"></div>
         </div>
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'HomePage'  // 修改组件名
-    }
-</script>
-
 <script setup>
-import { ref, onMounted } from 'vue'
-import * as echarts from 'echarts'
+    import { ref, onMounted } from 'vue'
+    import * as echarts from 'echarts'
+    import Weather from '../components/AppWeather.vue'
+    import axios from 'axios'
 
-const airQualityData = [
-  { date: '2024-01-01', pm25: 45, pm10: 60, co: 0.4, lat: 39.9, lon: 116.4 },
-  { date: '2024-01-02', pm25: 50, pm10: 55, co: 0.3, lat: 39.92, lon: 116.38 },
-  // 更多数据...
-]
+    const city = ref('shanghai')
+    const weatherData = ref(null)
+    const chart = ref(null)
+    const chartData = ref([])
 
-const startDate = ref('2024-01-01')
-const endDate = ref('2024-01-05')
-const chart = ref(null)
-
-const filterData = () => {
-  const filteredData = airQualityData.filter(item => item.date >= startDate.value && item.date <= endDate.value)
-  renderChart(filteredData)
-}
-
-const renderChart = (data) => {
-  const dates = data.map(item => item.date)
-  const pm25 = data.map(item => item.pm25)
-  const pm10 = data.map(item => item.pm10)
-  const co = data.map(item => item.co)
-  const latitudes = data.map(item => item.lat)
-  const longitudes = data.map(item => item.lon)
-
-  const myChart = echarts.init(chart.value)
-
-  const option = {
-    title: {
-      text: '空气质量指数 (PM2.5, PM10, CO)',
-    },
-    tooltip: {
-      trigger: 'axis',
-    },
-    legend: {
-      data: ['PM2.5', 'PM10', 'CO'],
-    },
-    xAxis: {
-      type: 'category',
-      data: dates,
-    },
-    yAxis: {
-      type: 'value',
-    },
-    series: [
-      {
-        name: 'PM2.5',
-        data: pm25,
-        type: 'line',
-        smooth: true,
-      },
-      {
-        name: 'PM10',
-        data: pm10,
-        type: 'line',
-        smooth: true,
-      },
-      {
-        name: 'CO',
-        data: co,
-        type: 'line',
-        smooth: true,
-      },
-    ],
-    // 热力图展示示例
-    visualMap: {
-      min: 0,
-      max: 100,
-      type: 'continuous',
-      inRange: {
-        color: ['blue', 'green', 'yellow', 'red'],
-      },
+    // 获取天气数据
+    const fetchWeatherData = async () => {
+        try {
+            const response = await axios.get(`https://api.waqi.info/feed/${city.value}/?token=demo`)
+            if (response.data.status === 'ok') {
+                weatherData.value = response.data.data
+                prepareChartData(response.data.data.forecast.daily)
+            } else {
+                alert('获取数据失败：' + response.data.message)
+            }
+        } catch (error) {
+            console.error('请求失败:', error)
+        }
     }
-  }
 
-  myChart.setOption(option)
-}
+    // 准备并渲染图表数据
+    const prepareChartData = (forecast) => {
+        chartData.value = forecast.pm25.map(day => ({
+            date: day.day,
+            value: day.avg,
+        }))
+        renderChart(chartData.value)
+    }
 
-onMounted(() => {
-  renderChart(airQualityData)
-})
+    const renderChart = (data) => {
+        const dates = data.map(item => item.date)
+        const values = data.map(item => item.value)
+
+        const myChart = echarts.init(chart.value)
+
+        const option = {
+            title: {
+                text: 'PM2.5 预测',
+            },
+            tooltip: {
+                trigger: 'axis',
+            },
+            xAxis: {
+                type: 'category',
+                data: dates,
+            },
+            yAxis: {
+                type: 'value',
+            },
+            series: [
+                {
+                    name: 'PM2.5',
+                    data: values,
+                    type: 'line',
+                    smooth: true,
+                },
+            ],
+        }
+
+        myChart.setOption(option)
+    }
+
+    onMounted(() => {
+        fetchWeatherData()
+    })
 </script>
 
 <style scoped>
@@ -123,4 +106,3 @@ onMounted(() => {
         height: 100%;
     }
 </style>
-
