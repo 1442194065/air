@@ -15,6 +15,7 @@
         <div class="chart-container" v-if="chartData.length">
             <div ref="chart" class="chart"></div>
         </div>
+        <RealTimeAirQuality />
     </div>
 </template>
 
@@ -23,6 +24,7 @@
     import * as echarts from 'echarts'
     import Weather from '../components/AppWeather.vue'
     import axios from 'axios'
+    import RealTimeAirQuality from '../components/RealTimeAirQuality.vue'
 
     const cities = ref(['shanghai', 'beijing', 'guangzhou', 'chengdu', 'shenzhen']) // 添加多个城市
     const city = ref(cities.value[0]) // 默认选择第一个城市
