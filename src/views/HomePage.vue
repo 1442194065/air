@@ -1,7 +1,7 @@
 <template>
     <div class="home">
-        <RealTimeAirQuality />
-        <ForeCast />
+        <RealTimeAirQuality :city="city" @city-change="updateCity"/>
+        <ForeCast :city="city"/>
     </div>
 </template>
 

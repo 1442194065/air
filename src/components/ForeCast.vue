@@ -1,12 +1,13 @@
 <template>
     <div class="forecast">
         <div class="filters">
-            <label for="city">选择城市：</label>
-            <select v-model="city" @change="fetchWeatherData">
-                <option v-for="cityName in cities" :key="cityName" :value="cityName">
-                    {{ cityName }}
-                </option>
-            </select>
+            <label for="city">请输入城市名称：</label>
+            <input id="city"
+                   v-model="city"
+                   placeholder="请输入城市名称"
+                   class="city-input"
+                   @keydown.enter="fetchWeatherData" 
+            />
             <button @click="fetchWeatherData">获取天气数据</button>
         </div>
 
@@ -24,8 +25,7 @@
     import Weather from '../components/AppWeather.vue'
     import axios from 'axios'
 
-    const cities = ref(['shanghai', 'beijing', 'guangzhou', 'chengdu', 'shenzhen']) // 添加多个城市
-    const city = ref(cities.value[0]) // 默认选择第一个城市
+    const city = ref('shanghai') // 默认选择第一个城市
     const weatherData = ref(null)
     const chart = ref(null)
     const myChart = ref(null) // 保存图表实例
@@ -47,9 +47,9 @@
     }
 
     // 监听 city 的变化，实时更新天气数据
-    watch(city, () => {
-        fetchWeatherData()
-    })
+    //watch(city, () => {
+    //    fetchWeatherData()
+    //})
 
     // 准备并渲染图表数据
     const prepareChartData = (forecast) => {

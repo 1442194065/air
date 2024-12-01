@@ -50,7 +50,7 @@
 </template>
   
   <script setup>
-  import { ref, onMounted, nextTick } from 'vue';
+  import { ref, onMounted, nextTick ,defineEmits } from 'vue';
   import { getAirQuality } from '@/api/airQualityService';
   import { processAirQualityData } from '@/utils/processData';
   import * as echarts from 'echarts';
@@ -59,7 +59,9 @@
   const loading = ref(false); // 加载状态
   const airQualityData = ref(null); // 存储处理后的数据
   const chart = ref(null); // 图表 DOM 引用
-  
+
+
+
   // 获取空气质量数据并处理
   const fetchAirQualityData = async () => {
     console.log('Fetching air quality data for city:', city.value);
@@ -142,6 +144,8 @@
     myChart.setOption(option);
   };
   
+
+
   // 组件挂载时获取数据
   onMounted(() => {
     fetchAirQualityData(); // 确保在 DOM 更新后调用
