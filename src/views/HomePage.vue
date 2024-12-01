@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-    import { ref, onMounted,watch } from 'vue'
+    import { ref, onMounted, watch } from 'vue'
     import * as echarts from 'echarts'
     import Weather from '../components/AppWeather.vue'
     import axios from 'axios'
@@ -28,13 +28,13 @@
     const city = ref(cities.value[0]) // 默认选择第一个城市
     const weatherData = ref(null)
     const chart = ref(null)
-    const chartInstance = ref(null) // 保存图表实例
+    const myChart = ref(null)/// 保存图表实例
     const chartData = ref([])
 
     // 获取天气数据
     const fetchWeatherData = async () => {
         try {
-            const response = await axios.get(`https://api.waqi.info/feed/${city.value}/?token=demo`)
+            const response = await axios.get(`https://api.waqi.info/feed/${city.value}/?token=c687d5338fc964e72be3c4767e54cb07cf94287b`)
             if (response.data.status === 'ok') {
                 weatherData.value = response.data.data
                 prepareChartData(response.data.data.forecast.daily)
@@ -69,18 +69,17 @@
         ]
         renderChart(chartData.value)
     }
-    
+
 
     const renderChart = (data) => {
         if (!chart.value) return
 
         // 如果图表实例存在，清除之前的实例
-        if (chartInstance.value) {
-            chartInstance.value.dispose()
-            
-        }
+        if (myChart.value) {
+            myChart.value.dispose()
 
-        chartInstance.value = echarts.init(chart.value) // 重新初始化图表
+        }
+        myChart.value = echarts.init(chart.value);
 
         const dates = data[0].data.map(item => item.date) // 统一取日期
         const series = data.map(item => ({
@@ -89,8 +88,6 @@
             smooth: true,
             data: item.data.map(point => point.value)
         }))
-        
-        const myChart = echarts.init(chart.value)
 
         const option = {
             title: {
@@ -112,7 +109,9 @@
             series: series,
         }
 
-        myChart.setOption(option)
+        myChart.value.setOption(option);
+
+        
     }
 
     onMounted(() => {
