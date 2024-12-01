@@ -1,18 +1,21 @@
 <template>
     <div class="home">
-        <!-- 选择组件的输入框 -->
+        <!-- 按钮选择 -->
         <div class="component-selector">
-            <label for="component-select">选择显示的组件:</label>
-            <select v-model="selectedComponent" id="component-select">
-                <option value="RealTimeAirQuality">实时空气质量</option>
-                <option value="ForeCast">天气预报</option>
-                <option value="HeatMap">热力图</option>
-            </select>
+            <button v-for="component in components"
+                    :key="component.name"
+                    :class="{ active: activeComponents.includes(component.name) }"
+                    @click="toggleComponent(component.name)">
+                {{ component.label }}
+            </button>
         </div>
+
         <!-- 动态显示子组件 -->
-        <RealTimeAirQuality v-if="selectedComponent === 'RealTimeAirQuality'" :city="city" @city-change="updateCity" />
-        <ForeCast v-if="selectedComponent === 'ForeCast'" :city="city" />
-        <HeatMap v-if="selectedComponent === 'HeatMap'" :city="city" />
+        <div class="components-container">
+            <RealTimeAirQuality v-if="activeComponents.includes('RealTimeAirQuality')" :city="city" @city-change="updateCity" />
+            <ForeCast v-if="activeComponents.includes('ForeCast')" :city="city" />
+            <HeatMap v-if="activeComponents.includes('HeatMap')" :city="city" />
+        </div>
     </div>
 </template>
 
@@ -22,8 +25,29 @@
     import ForeCast from '../components/ForeCast.vue'
     import HeatMap from '../components/HeatMap.vue'
 
-    const city = ref('shanghai') // 默认城市
-    const selectedComponent = ref('RealTimeAirQuality') // 默认显示实时空气质量组件
+    // 定义组件的元信息
+    const components = ref([
+        { name: 'RealTimeAirQuality', label: '实时空气质量' },
+        { name: 'ForeCast', label: '天气预报' },
+        { name: 'HeatMap', label: '热力图' },
+    ])
+
+    // 激活的组件数组
+    const activeComponents = ref([])
+
+    // 当前城市
+    const city = ref('shanghai')
+
+    // 切换组件激活状态
+    const toggleComponent = (componentName) => {
+        if (activeComponents.value.includes(componentName)) {
+            // 如果组件已激活，则移除
+            activeComponents.value = activeComponents.value.filter(name => name !== componentName)
+        } else {
+            // 如果组件未激活，则添加
+            activeComponents.value.push(componentName)
+        }
+    }
 
     // 更新城市的方法
     const updateCity = (newCity) => {
@@ -38,11 +62,36 @@
 
     .component-selector {
         margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap; /* 使按钮在屏幕空间不足时换行 */
     }
 
-    select {
-        padding: 5px 10px;
-        font-size: 16px;
+    button {
+        padding: 10px 20px;
+        font-size: 14px;
+        cursor: pointer;
+        border: 1px solid #ccc;
         border-radius: 5px;
+        background-color: #f9f9f9;
+        transition: background-color 0.3s, color 0.3s;
     }
+
+        button.active {
+            background-color: #007BFF;
+            color: white;
+            border-color: #0056b3;
+        }
+
+    .components-container {
+        display: flex;
+        flex-wrap: wrap; /* 如果组件过多，可以换行 */
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+        .components-container > * {
+            flex: 1 1 calc(33% - 20px); /* 每个组件占页面三分之一宽度，减去间隔 */
+            min-width: 300px; /* 设置组件最小宽度 */
+        }
 </style>
