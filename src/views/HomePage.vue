@@ -10,7 +10,7 @@
             <button @click="fetchWeatherData">获取天气数据</button>
         </div>
 
-        <Weather v-if="weatherData" :data="weatherData" />
+        <Weather v-if="weatherData" :weatherData="weatherData" />
 
         <div class="chart-container" v-if="chartData.length">
             <div ref="chart" class="chart"></div>
