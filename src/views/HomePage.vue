@@ -6,12 +6,13 @@
             <select v-model="selectedComponent" id="component-select">
                 <option value="RealTimeAirQuality">实时空气质量</option>
                 <option value="ForeCast">天气预报</option>
+                <option value="HeatMap">热力图</option>
             </select>
         </div>
-
         <!-- 动态显示子组件 -->
         <RealTimeAirQuality v-if="selectedComponent === 'RealTimeAirQuality'" :city="city" @city-change="updateCity" />
         <ForeCast v-if="selectedComponent === 'ForeCast'" :city="city" />
+        <HeatMap v-if="selectedComponent === 'HeatMap'" :city="city" />
     </div>
 </template>
 
@@ -19,6 +20,7 @@
     import { ref } from 'vue'
     import RealTimeAirQuality from '../components/RealTimeAirQuality.vue'
     import ForeCast from '../components/ForeCast.vue'
+    import HeatMap from '../components/HeatMap.vue'
 
     const city = ref('shanghai') // 默认城市
     const selectedComponent = ref('RealTimeAirQuality') // 默认显示实时空气质量组件
