@@ -15,9 +15,9 @@
             <RealTimeAirQuality v-if="activeComponents.includes('RealTimeAirQuality')" :city="city" @city-change="updateCity" />
             <ForeCast v-if="activeComponents.includes('ForeCast')" :city="city" />
             <HeatMap v-if="activeComponents.includes('HeatMap')" :city="city" />
+            <DataMap v-if="activeComponents.includes('DataMap')" :city="city" />
         </div>
     </div>
-    <DataMap/>
 </template>
 
 <script setup>
@@ -31,6 +31,7 @@
         { name: 'RealTimeAirQuality', label: '实时空气质量' },
         { name: 'ForeCast', label: '天气预报' },
         { name: 'HeatMap', label: '热力图' },
+        { name: 'DataMap', label: '数据地图'}
     ])
 
     // 激活的组件数组

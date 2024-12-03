@@ -1,11 +1,27 @@
 <template>
   <div>
+    <!-- 城市搜索框 -->
+    <input 
+      v-model="city" 
+      type="text" 
+      placeholder="输入城市名称,按下回车搜索" 
+      @keyup.enter="searchCity" 
+      style="padding: 8px; margin-bottom: 10px; width: 300px; border-radius: 4px; border: 1px solid #ccc;"
+    />
     <div id="map"></div>
   </div>
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      city: '', // 搜索框中的城市名称
+      map: null, // 地图实例
+      osmLayer: null, // OpenStreetMap 图层
+      waqiLayer: null // 空气质量图层
+    };
+  },
   mounted() {
     // 加载 Leaflet 的 CSS 文件
     this.loadStyle('http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css')
@@ -43,18 +59,43 @@ export default {
         document.body.appendChild(script);
       });
     },
+    // 加载 Leaflet 地图
     loadLeafletMap() {
       const L = window.L;
       const OSM_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
       const OSM_ATTRIB = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-      const osmLayer = L.tileLayer(OSM_URL, { attribution: OSM_ATTRIB });
+      this.osmLayer = L.tileLayer(OSM_URL, { attribution: OSM_ATTRIB });
 
       const WAQI_URL = "https://tiles.waqi.info/tiles/usepa-aqi/{z}/{x}/{y}.png?token=_TOKEN_ID_";
       const WAQI_ATTR = 'Air Quality Tiles &copy; <a href="http://waqi.info">waqi.info</a>';
-      const waqiLayer = L.tileLayer(WAQI_URL, { attribution: WAQI_ATTR });
+      this.waqiLayer = L.tileLayer(WAQI_URL, { attribution: WAQI_ATTR });
 
-      const map = L.map('map').setView([51.505, -0.09], 11);
-      map.addLayer(osmLayer).addLayer(waqiLayer);
+      this.map = L.map('map').setView([51.505, -0.09], 11); // 初始位置
+      this.map.addLayer(this.osmLayer).addLayer(this.waqiLayer);
+    },
+    // 搜索城市，更新地图位置
+    searchCity() {
+      if (!this.city) return;
+
+      // 使用 Geocoding API (这里以 Nominatim 为例)
+      const geocodeUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${this.city}`;
+
+      fetch(geocodeUrl)
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.length > 0) {
+            const lat = parseFloat(data[0].lat);
+            const lon = parseFloat(data[0].lon);
+
+            // 更新地图视图
+            this.map.setView([lat, lon], 11);
+          } else {
+            alert('未找到该城市');
+          }
+        })
+        .catch((err) => {
+          console.error('城市搜索失败', err);
+        });
     }
   }
 };
