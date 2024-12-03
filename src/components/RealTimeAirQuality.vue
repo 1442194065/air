@@ -50,7 +50,7 @@
 </template>
   
   <script setup>
-  import { ref, onMounted, nextTick ,defineEmits } from 'vue';
+  import { ref, onMounted, nextTick  } from 'vue';
   import { getAirQuality } from '@/api/airQualityService';
   import { processAirQualityData } from '@/utils/processData';
   import * as echarts from 'echarts';

@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-    import { ref, onMounted, watch } from 'vue'
+    import { ref, onMounted } from 'vue'
     import * as echarts from 'echarts'
     import Weather from '../components/AppWeather.vue'
     import axios from 'axios'
