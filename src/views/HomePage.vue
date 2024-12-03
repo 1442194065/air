@@ -17,6 +17,7 @@
             <HeatMap v-if="activeComponents.includes('HeatMap')" :city="city" />
         </div>
     </div>
+    <DataMap/>
 </template>
 
 <script setup>
@@ -24,7 +25,7 @@
     import RealTimeAirQuality from '../components/RealTimeAirQuality.vue'
     import ForeCast from '../components/ForeCast.vue'
     import HeatMap from '../components/HeatMap.vue'
-
+    import DataMap from '../components/DataMap.vue'
     // 定义组件的元信息
     const components = ref([
         { name: 'RealTimeAirQuality', label: '实时空气质量' },
