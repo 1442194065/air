@@ -87,6 +87,7 @@ export default {
 
     // 处理 CSV 数据并生成图表需要的数据
     const prepareChartData = () => {
+      console.log(csvData);
       const groupedData = {};  // 存储按年份分组的数据
 
       csvData.value.forEach((row) => {

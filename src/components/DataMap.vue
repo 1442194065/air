@@ -1,10 +1,12 @@
 <template>
+  
   <div>
+    <h2>城市空气质量分布图 - 当前城市: {{ displaycity }}</h2>
     <!-- 城市搜索框 -->
     <input 
       v-model="city" 
       type="text" 
-      placeholder="输入城市名称,按下回车搜索" 
+      placeholder="输入城市名/地名,按下回车搜索" 
       @keyup.enter="searchCity" 
       style="padding: 8px; margin-bottom: 10px; width: 300px; border-radius: 4px; border: 1px solid #ccc;"
     />
@@ -16,6 +18,7 @@
 export default {
   data() {
     return {
+      displaycity: '',
       city: '', // 搜索框中的城市名称
       map: null, // 地图实例
       osmLayer: null, // OpenStreetMap 图层
@@ -86,7 +89,7 @@ export default {
           if (data && data.length > 0) {
             const lat = parseFloat(data[0].lat);
             const lon = parseFloat(data[0].lon);
-
+            this.displaycity = this.city;
             // 更新地图视图
             this.map.setView([lat, lon], 11);
           } else {
