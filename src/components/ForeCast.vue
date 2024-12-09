@@ -25,7 +25,7 @@
     import Weather from '../components/AppWeather.vue'
     import axios from 'axios'
 
-    const city = ref('shanghai') // 默认选择第一个城市
+    const city = ref('hangzhou') // 默认选择第一个城市
     const weatherData = ref(null)
     const chart = ref(null)
     const myChart = ref(null) // 保存图表实例
@@ -89,7 +89,7 @@
 
         const option = {
             title: {
-                text: `${city.value} 空气质量数据`,
+                text: `${city.value} 未来空气质量预测`,
             },
             tooltip: {
                 trigger: 'axis',
