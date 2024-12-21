@@ -93,6 +93,7 @@
         align-items: center;
         gap: 10px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        min-width: 160px; /* 保证按钮有足够宽度 */
     }
 
         button.active {
@@ -117,19 +118,56 @@
 
     /* 动态组件容器 */
     .components-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        display: flex;
+        flex-wrap: wrap;
         gap: 20px;
         margin-top: 20px;
+        justify-content: center;
+        align-items: center;
     }
 
-    /* 组件的过渡动画 */
-    .fade-enter-active, .fade-leave-active {
-        transition: opacity 0.5s;
+        /* 1个组件时，确保居中并且占满全宽 */
+        .components-container > * {
+            flex: 1 1 100%;
+            min-width: 300px;
+        }
+
+    /* 2个组件时每行2个 */
+    @media (min-width: 768px) {
+        .components-container {
+            justify-content: stretch;
+        }
+
+            .components-container > * {
+                flex: 1 1 calc(50% - 10px);
+            }
+    }
+
+    /* 4个组件时，每行2个，2行 */
+    @media (min-width: 1200px) {
+        .components-container {
+            grid-template-columns: repeat(2, 1fr);
+            justify-items: stretch;
+        }
+
+            .components-container > * {
+                flex: 1 1 calc(50% - 10px);
+            }
+    }
+
+    /* fade 过渡效果 */
+    .fade-enter-active,
+    .fade-leave-active {
+        transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
     .fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
         opacity: 0;
+        transform: translateY(20px); /* 在消失时向下移动，进入时向上移动 */
+    }
+
+    .fade-enter-to, .fade-leave {
+        opacity: 1;
+        transform: translateY(0);
     }
 </style>
-
