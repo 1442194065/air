@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-    import { ref, onMounted } from 'vue'
+    import { ref, onMounted, markRaw } from 'vue'
     import * as echarts from 'echarts'
     import Weather from '../components/AppWeather.vue'
     import axios from 'axios'
@@ -56,6 +56,7 @@
         chartData.value = [
             {
                 name: 'PM2.5',
+                //data: forecast.pm25 ? forecast.pm25.map(day => ({ date: day.day, value: day.avg })) : [],
                 data: forecast.pm25.map(day => ({ date: day.day, value: day.avg })),
             },
             {
@@ -77,7 +78,7 @@
         if (myChart.value) {
             myChart.value.dispose()
         }
-        myChart.value = echarts.init(chart.value);
+        myChart.value = markRaw(echarts.init(chart.value));
 
         const dates = data[0].data.map(item => item.date) // 统一取日期
         const series = data.map(item => ({
