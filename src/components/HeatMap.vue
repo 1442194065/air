@@ -289,7 +289,7 @@ export default {
         },
       };
       
-      if(maxValue == 1){
+      if(maxValue == 1||minValue == 0){
         option.visualMap.pieces = [
         { min: 0, max: 0.5, label: '达标' },
         { min: 0.5, max: 1, label: '不达标' }
