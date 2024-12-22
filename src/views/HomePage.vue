@@ -10,7 +10,7 @@
                 {{ component.label }}
             </button>
         </div>
-
+        
         <!-- 动态显示子组件 -->
         <div class="components-container">
             <transition name="fade">
@@ -77,6 +77,7 @@
 <style scoped>
     .home {
         padding: 20px;
+        padding-bottom: 120px;
         min-height: 100vh;
     }
 

@@ -2,7 +2,7 @@
     <div id="app"  :style="backgroundStyle" >
         <Header />
         <main>
-            <Home @update-aqi="updateAqi" />  <!-- Äã½«·ÅÖÃ¿ÉÊÓ»¯Í¼±íºÍÊý¾Ý½»»¥µÄÒ³Ãæ -->
+            <Home @update-aqi="updateAqi" />  <!-- ï¿½ã½«ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½Ó»ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ -->
         </main>
         <Footer />
     </div>
