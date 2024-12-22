@@ -14,7 +14,7 @@
         <!-- 动态显示子组件 -->
         <div class="components-container">
             <transition name="fade">
-                <RealTimeAirQuality v-if="activeComponents.includes('RealTimeAirQuality')" :city="city" @city-change="updateCity" />
+                <RealTimeAirQuality v-if="activeComponents.includes('RealTimeAirQuality')" :city="city" @city-change="updateCity" @update-aqi="updateAqi" />
             </transition>
             <transition name="fade">
                 <ForeCast v-if="activeComponents.includes('ForeCast')" :city="city" />
@@ -30,11 +30,13 @@
 </template>
 
 <script setup>
-    import { ref } from 'vue'
+    import { ref, defineEmits } from 'vue'
     import RealTimeAirQuality from '../components/RealTimeAirQuality.vue'
     import ForeCast from '../components/ForeCast.vue'
     import HeatMap from '../components/HeatMap.vue'
     import DataMap from '../components/DataMap.vue'
+
+    const emit = defineEmits(['update-aqi'])
 
     // 定义组件的元信息和图标
     const components = ref([
@@ -50,6 +52,8 @@
     // 当前城市
     const city = ref('shanghai')
 
+    const aqi = ref(null)
+
     // 切换组件激活状态
     const toggleComponent = (componentName) => {
         if (activeComponents.value.includes(componentName)) {
@@ -63,12 +67,16 @@
     const updateCity = (newCity) => {
         city.value = newCity
     }
+    const updateAqi = (newAqi) => {
+        aqi.value = newAqi
+        console.log('Updated AQI in HomePage:', aqi.value)
+        emit('update-aqi', newAqi)
+    }
 </script>
 
 <style scoped>
     .home {
         padding: 20px;
-        background-color: #f4f7fc;
         min-height: 100vh;
     }
 

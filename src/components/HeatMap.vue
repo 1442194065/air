@@ -1,6 +1,17 @@
 <template>
-  <div class="container">
+  <div
+    class="card"
+    style="
+      max-width: 800px; 
+      margin: 20px auto; 
+      padding: 20px; 
+      background-color: #fff; 
+      border-radius: 8px; 
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+      border: 1px solid #f0f0f0;"
+  >
       <h2>历史天气污染数据查看</h2>
+     
       <!-- 选择年份的下拉列表 -->
       <div class="filters-container">
         <div class="filter">
@@ -29,9 +40,59 @@
                   </option>
               </select>
           </div>
+
+          <div class="filter">
+              <label for="standard-select">按国家标准展示：</label>
+              <select id="standard-select" v-model="currentStandard">
+                  <option v-for="standard in availableStandards" :key="standard" :value="standard">
+                      {{ standard }}
+                  </option>
+              </select>
+          </div>
       </div>
       <!-- 显示 ECharts 图表的容器 -->
-      <div ref="heatmap" style="width: 100%; height: 500px;"></div>
+      <div ref="heatmap" style="width: 100%; height: 250px;"></div>、
+      <table>
+        <thead>
+          <tr>
+            <th>污染物</th>
+            <th>一级标准(24h平均)</th>
+            <th>二级标准(24h平均)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>PM2.5</td>
+            <td>35 (&mu;g/m<sup>3</sup>)</td>
+            <td>75 (&mu;g/m<sup>3</sup>) </td>
+          </tr>
+          <tr>
+            <td>PM10</td>
+            <td>50 (&mu;g/m<sup>3</sup>)</td>
+            <td>150 (&mu;g/m<sup>3</sup>)</td>
+          </tr>
+          <tr>
+            <td>O₃</td>
+            <td>100 (&mu;g/m<sup>3</sup>)</td>
+            <td>160 (&mu;g/m<sup>3</sup>)</td>
+          </tr>
+          <tr>
+            <td>NO₂</td>
+            <td>80 (&mu;g/m<sup>3</sup>)</td>
+            <td>80 (&mu;g/m<sup>3</sup>)</td>
+          </tr>
+          <tr>
+            <td>SO₂</td>
+            <td>50 (mg/m<sup>3</sup>)</td>
+            <td>150(mg/m<sup>3</sup>)</td>
+          </tr>
+          <tr>
+            <td>CO</td>
+            <td>4 (&mu;g/m<sup>3</sup>)</td>
+            <td>4 (&mu;g/m<sup>3</sup>)</td>
+          </tr>
+        </tbody>
+      </table>
   </div>
 </template>
 
@@ -63,7 +124,26 @@ export default {
       成都: 'Chengdu',
       沈阳: 'Shenyang'
     };
-
+    const availableStandards = ref(['一级','二级','无']);
+    const currentStandard = ref('无');
+    const standard_to_pollution = {
+      '一级': {
+        'pm25': 35,
+        'pm10': 50,
+        'o3': 100,
+        'no2': 80,
+        'so2': 50,
+        'co': 4
+      },
+      '二级': {
+        'pm25': 75,
+        'pm10': 150,
+        'o3': 160,
+        'no2': 80,
+        'so2': 150,
+        'co': 4
+      }
+    }
     // 读取本地 CSV 文件
     const loadCSVData = async () => {
       const curretCityEnglish = switchCityNameToEnglish[currentCity.value];
@@ -139,18 +219,26 @@ export default {
           });
           }
       });
+        var newGroupedData = groupedData[currentYear.value][currentPollution.value];
 
-          renderChart(groupedData[currentYear.value][currentPollution.value]);  // 渲染当前年份和污染物的数据
-      };
+        if(currentStandard.value === '一级'){
+          newGroupedData = newGroupedData.map((item) => {
+            const threshold = standard_to_pollution['一级'][currentPollution.value];
+            return [item[0], item[1] > threshold ? 1 : 0];
+          });
+        }else if(currentStandard.value === '二级'){
+          newGroupedData = newGroupedData.map((item) => {
+            const threshold = standard_to_pollution['二级'][currentPollution.value];
+            return [item[0], item[1] > threshold ? 1 : 0];
+          });
+        }
+        console.log('newGroupedData',newGroupedData);
+      renderChart(newGroupedData);  // 渲染当前年份和污染物的数据
+    };
 
     // 渲染 ECharts 图表
     const renderChart = (data) => {
       const values = data.map(item => item[1]);
-
-      // 使用 Math.min 和 Math.max 求最小值和最大值
-      const minValue = Math.min(...values);
-      const maxValue = Math.max(...values);
-
       const pollutionColorRanges = {
           pm25: ['#f1e6b9', '#d94e5d'],  // PM2.5：浅黄到深红
           pm10: ['#a9e0b0', '#237A57'],  // PM10：浅紫到深紫
@@ -159,7 +247,11 @@ export default {
           co: ['#d9f2f8', '#34495e'],    // CO：浅蓝到深灰
           so2: ['#f1e6f6', '#8e44ad'],    // SO2：浅紫到深紫
       };
+      // 使用 Math.min 和 Math.max 求最小值和最大值
+      const minValue = Math.min(...values);
+      const maxValue = Math.max(...values);
       const currentColorRange = pollutionColorRanges[currentPollution.value] || pollutionColorRanges.pm25;
+
 
       const option = {
         title: {
@@ -196,7 +288,22 @@ export default {
           data: data,
         },
       };
-
+      
+      if(maxValue == 1||minValue == 0){
+        option.visualMap.pieces = [
+        { min: 0, max: 0.5, label: '达标' },
+        { min: 0.5, max: 1, label: '不达标' }
+      ]
+      }else{
+        option.visualMap.inRange = {
+          color: currentColorRange,
+        };
+        delete option.visualMap.pieces;
+        console.log('option.visualMap',option.visualMap);
+        if (heatmap.value) {
+          echarts.dispose(heatmap.value);  // 销毁原来的实例
+        }
+      }
       // 初始化 ECharts 实例并设置选项
       if (heatmap.value) {
         const chart = echarts.init(heatmap.value);  // 使用 ref 来引用容器
@@ -207,6 +314,10 @@ export default {
     watch(currentYear, () => {
        prepareChartData();
     });
+    watch(currentStandard, () => {
+      console.log('currentStandard',currentStandard.value);
+       prepareChartData();
+    })
     watch(currentPollution, () => {
        prepareChartData();
     })
@@ -225,13 +336,33 @@ export default {
       currentPollution,
       availablePollutions,
       currentCity,
-      availableCities
+      availableCities,
+      currentStandard,
+      availableStandards,
+      standard_to_pollution
     };
   },
 };
 </script>
 
 <style scoped>
+   table {
+      width: 50%;
+      border-collapse: collapse;
+      margin: 20px auto;
+      font-family: Arial, sans-serif;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      text-align: center;
+      padding: 8px;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
   .filters-container {
       display: flex;
       gap: 20px; /* 添加间隔 */

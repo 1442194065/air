@@ -8,24 +8,27 @@
         class="city-input"
         @keyup.enter="fetchAirQualityData"
       />
-      <button @click="fetchAirQualityData" class="fetch-button">查询</button>
+      <button @click="fetchAirQualityData" class="fetch-button">
+        <i class="fas fa-search"></i>
+      </button>
     </div>
       <div v-if="loading" class="loading-message">
         加载中，请稍候...
       </div>
       <div v-else>
+        <div v-if="airQualityData" class="info-container">
+          <div class="icon"><i class="fas fa-smog"></i></div>
         <div v-if="airQualityData" class="data-container">
           <div class="data-item">
-            <span class="data-label">城市：</span>
-            <span class="data-value">{{ airQualityData.city.name }}</span>
+            <span class="icon-with-text">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{ airQualityData.city.name }}</span>
+            </span>
           </div>
           <div class="data-item">
-            <span class="data-label">空气质量指数 (AQI)：</span>
-            <span class="data-value">{{ airQualityData.aqi }}</span>
-          </div>
-          <div class="data-item">
-            <span class="data-label">主导污染物：</span>
-            <span class="data-value">{{ airQualityData.dominantpol || '暂无数据' }}</span>
+            <!-- <span class="data-label">空气质量指数 (AQI)：</span>
+            <span class="data-value">{{ airQualityData.aqi }}</span> -->
+              <span class="aqi-value">{{ 'AQI: ' + airQualityData.aqi }}</span>
           </div>
           <div class="data-item">
             <span class="data-label">更新时间：</span>
@@ -44,17 +47,19 @@
             </span>
           </div>
         </div>
+        </div>
         <div v-if="!loading" ref="chart" class="chart"></div>
       </div>
     </div>
 </template>
   
   <script setup>
-  import { ref, onMounted, nextTick  } from 'vue';
+  import { ref, onMounted, nextTick, defineEmits } from 'vue';
   import { getAirQuality } from '@/api/airQualityService';
   import { processAirQualityData } from '@/utils/processData';
   import * as echarts from 'echarts';
   
+  const emit = defineEmits(['update-aqi']);
   const city = ref('hangzhou'); // 位置
   const loading = ref(false); // 加载状态
   const airQualityData = ref(null); // 存储处理后的数据
@@ -82,6 +87,7 @@
       renderChart(processedData);
     });
       console.log('Chart rendered');
+      emit('update-aqi', processedData.aqi);
     } catch (error) {
       console.error('获取空气质量数据失败', error);
     } finally {
@@ -123,20 +129,59 @@
       },
       tooltip: {
         trigger: 'axis',
+        axisPointer: { type: 'shadow' },
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        textStyle: { color: '#fff' },
       },
       xAxis: {
         type: 'category',
         data: barData.map((item) => item.name),
+        axisLabel: {
+          color: '#555',
+          fontSize: 14,
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#ccc',
+          },
+        },
       },
       yAxis: {
         type: 'value',
         name: '浓度值',
+        axisLabel: {
+          color: '#555',
+          fontSize: 14,
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#ccc',
+          },
+        },
+        splitLine: {
+          lineStyle: {
+            type: 'dashed',
+          },
+        },
       },
       series: [
         {
           name: '浓度值',
           type: 'bar',
           data: barData.map((item) => item.value),
+          itemStyle: {
+            normal: {
+              color: () => {
+                const colors = [
+                  { offset: 0, color: '#f98c53' }, 
+                  { offset: 1, color: '#d2e0aa' } 
+                ];
+
+                return new echarts.graphic.LinearGradient(0, 0, 0, 1, colors);
+              },
+              barBorderRadius: [5, 5, 0, 0],
+            },
+          },
         },
       ],
     };
@@ -158,11 +203,45 @@
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    background: #f9f9f9;
+    background: rgba(255, 255, 255, 0.4);
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     font-family: Arial, sans-serif;
   }
+
+  .info-container {
+  display: flex; /* 水平排列 */
+  align-items: center; /* 垂直居中 */
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.icon {
+  font-size: 160px; /* 图标大小 */
+  margin-right: 20px; /* 图标与右侧信息的间距 */
+  color: #555
+}
+
+.icon-with-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px; 
+  color: #333;
+}
+
+.icon-with-text i {
+  color: #007bff;
+  font-size: 20px;
+}
+
+.aqi-value {
+  font-size: 3.5em;
+  font-weight: bold;
+  color: #333;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
   
   h2 {
     text-align: center;
@@ -179,24 +258,34 @@
 
 .city-input {
   width: 70%;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 16px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.city-input:focus {
+  background: rgba(255, 255, 255, 1); 
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.6); 
 }
 
 .fetch-button {
   margin-left: 10px;
   padding: 10px 20px;
-  background-color: #007BFF;
+  background-color: rgba(0, 123, 255, 0.8);
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .fetch-button:hover {
   background-color: #0056b3;
+  transform: scale(1.05);
 }
   
   .loading-message {
@@ -208,27 +297,26 @@
   .data-container {
     margin-bottom: 20px;
     padding: 10px;
-    background: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex: 1;
   }
   
   .data-item {
-    margin: 10px 0;
+    margin-top: 15px;
+    margin-bottom: 15px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
   }
   
   .data-label {
     font-weight: bold;
     color: #555;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
   
   .data-value {
     font-weight: 500;
     color: #222;
-    text-align: right;
   }
   
   .source-link {
@@ -247,8 +335,6 @@
     display: block;
     margin-top: 20px;
     border-radius: 8px;
-    background: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   </style>
   
