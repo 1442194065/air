@@ -1,14 +1,14 @@
 /**
- * å¤„ç†ä» API è·å–çš„ç©ºæ°”è´¨é‡æ•°æ®
- * @param {Object} data - API è¿”å›çš„åŸå§‹æ•°æ®
- * @returns {Object} å¤„ç†åçš„æ•°æ®
+ * ´¦Àí´Ó API »ñÈ¡µÄ¿ÕÆøÖÊÁ¿Êı¾İ
+ * @param {Object} data - API ·µ»ØµÄÔ­Ê¼Êı¾İ
+ * @returns {Object} ´¦ÀíºóµÄÊı¾İ
  */
 
 export function processAirQualityData(data) {
     if (!data || !data.data) {
         throw new Error("Invalid data format");
-      }
-      const {
+    }
+    const {
         aqi,
         idx,
         attributions,
@@ -17,27 +17,27 @@ export function processAirQualityData(data) {
         iaqi,
         time,
         forecast,
-      } = data.data;
-  
-    // æå–å½“å‰æ—¶é—´ã€åŸå¸‚ã€AQI å’Œä¸»å¯¼æ±¡æŸ“ç‰©
+    } = data.data;
+
+    // ÌáÈ¡µ±Ç°Ê±¼ä¡¢³ÇÊĞ¡¢AQI ºÍÖ÷µ¼ÎÛÈ¾Îï
     const airQualityData = {
         city: {
-          name: city.name,
-          geo: city.geo, // åœ°ç†ä½ç½® [çº¬åº¦, ç»åº¦]
-          url: city.url,
+            name: city.name,
+            geo: city.geo, // µØÀíÎ»ÖÃ [Î³¶È, ¾­¶È]
+            url: city.url,
         },
-        aqi, // ç©ºæ°”è´¨é‡æŒ‡æ•°
-        idx, // å”¯ä¸€çš„ç«™ç‚¹ID
-        attributions, // æ•°æ®æ¥æº
-        dominantpol, // ä¸»å¯¼æ±¡æŸ“ç‰©
-        iaqi, // å„ç§æ±¡æŸ“ç‰©æŒ‡æ•°
+        aqi, // ¿ÕÆøÖÊÁ¿Ö¸Êı
+        idx, // Î¨Ò»µÄÕ¾µãID
+        attributions, // Êı¾İÀ´Ô´
+        dominantpol, // Ö÷µ¼ÎÛÈ¾Îï
+        iaqi, // ¸÷ÖÖÎÛÈ¾ÎïÖ¸Êı
         time: {
-          localTime: time.s,
-          timestamp: time.v,
-          isoTime: time.iso,
+            localTime: time.s,
+            timestamp: time.v,
+            isoTime: time.iso,
         },
-        forecast: forecast.daily, // æœªæ¥7å¤©çš„ç©ºæ°”è´¨é‡é¢„æµ‹
-      };
-  
-      return airQualityData;
-  }
+        forecast: forecast.daily, // Î´À´7ÌìµÄ¿ÕÆøÖÊÁ¿Ô¤²â
+    };
+
+    return airQualityData;
+}

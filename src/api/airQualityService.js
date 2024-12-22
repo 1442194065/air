@@ -1,24 +1,24 @@
 import axios from 'axios';
 
-const API_TOKEN = '45a4edfcfe7bcdec6b08ee9ac712864043c96323'; // è¯·æ›¿æ¢ä¸ºä½ çš„å®é™…ä»¤ç‰Œ
+const API_TOKEN = '45a4edfcfe7bcdec6b08ee9ac712864043c96323'; // ÇëÌæ»»ÎªÄãµÄÊµ¼ÊÁîÅÆ
 
 /**
- * è·å–æŒ‡å®šåŸå¸‚æˆ–ç«™ç‚¹çš„å®æ—¶ç©ºæ°”è´¨é‡æ•°æ®ã€‚
- * @param {string} location - åŸå¸‚åç§°æˆ–ç«™ç‚¹ID (ä¾‹å¦‚: "beijing")
- * @returns {Promise<Object>} åŒ…å«ç©ºæ°”è´¨é‡æ•°æ®çš„å¯¹è±¡
+ * »ñÈ¡Ö¸¶¨³ÇÊĞ»òÕ¾µãµÄÊµÊ±¿ÕÆøÖÊÁ¿Êı¾İ¡£
+ * @param {string} location - ³ÇÊĞÃû³Æ»òÕ¾µãID (ÀıÈç: "beijing")
+ * @returns {Promise<Object>} °üº¬¿ÕÆøÖÊÁ¿Êı¾İµÄ¶ÔÏó
  */
 
 const API_URL = 'https://api.waqi.info/feed';
 
 export function getAirQuality(location) {
     return axios.get(`${API_URL}/${location}/`, {
-      params: { token: API_TOKEN },
+        params: { token: API_TOKEN },
     })
-      .then(response => {
-        return response.data;
-      })
-      .catch(error => {
-        console.error("Error fetching air quality data:", error);
-        throw error;
-      });
-  }
+        .then(response => {
+            return response.data;
+        })
+        .catch(error => {
+            console.error("Error fetching air quality data:", error);
+            throw error;
+        });
+}
