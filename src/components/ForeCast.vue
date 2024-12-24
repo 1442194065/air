@@ -1,14 +1,14 @@
 <template>
     <div class="forecast">
         <div class="filters">
-            <label for="city">请输入城市名称：</label>
+            <label for="city" class="city-label">请输入城市名称：</label>
             <input id="city"
                    v-model="city"
                    placeholder="请输入城市名称"
                    class="city-input"
                    @keydown.enter="fetchWeatherData" 
             />
-            <button @click="fetchWeatherData">获取天气数据</button>
+            <button class="fetch-button" @click="fetchWeatherData"><i class="fas fa-search"></i></button>
         </div>
 
         <Weather v-if="weatherData" :weatherData="weatherData" />
@@ -119,10 +119,14 @@
 <style scoped>
     .forecast {
         padding: 20px;
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: rgba(255, 255, 255, 0.6);
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.208);
     }
 
     .filters {
-        margin-bottom: 20px;
+        margin-top: 20px;
     }
 
     .chart-container {
@@ -133,5 +137,25 @@
     .chart {
         width: 100%;
         height: 100%;
+    }
+    .city-label {
+        font-size: 1.5rem;
+        color: #333;
+    }
+    .city-input {
+        width: 200px;
+        padding: 10px;
+        margin-right: 10px;
+        font-size: 17px;
+        background-color: rgba(255, 255, 255, 0.7);
+        border: 1px solid #ccc;
+    }
+    .fetch-button {
+        padding: 13px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
     }
 </style>
