@@ -5,10 +5,10 @@
       max-width: 800px; 
       margin: 20px auto; 
       padding: 20px; 
-      background-color: #fff; 
-      border-radius: 8px; 
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-      border: 1px solid #f0f0f0;"
+      background-color: rgba(255, 255, 255, 0.6);
+      border-radius: 12px; 
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); 
+      border: 1px solid rgba(240, 240, 240, 0.8);"
   >
       <h2>历史天气污染数据查看</h2>
      

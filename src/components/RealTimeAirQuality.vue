@@ -17,7 +17,9 @@
       </div>
       <div v-else>
         <div v-if="airQualityData" class="info-container">
-          <div class="icon"><i class="fas fa-smog"></i></div>
+          <div class="gauge-container">
+          <div ref="gaugeChart" class="gauge-chart"></div>
+          </div>
         <div v-if="airQualityData" class="data-container">
           <div class="data-item">
             <span class="icon-with-text">
@@ -64,6 +66,7 @@
   const loading = ref(false); // 加载状态
   const airQualityData = ref(null); // 存储处理后的数据
   const chart = ref(null); // 图表 DOM 引用
+  const gaugeChart = ref(null); // 仪表盘 DOM 引用
 
 
 
@@ -84,6 +87,7 @@
 
       nextTick(() => {
       console.log('Chart DOM after nextTick:', chart.value);
+      renderGaugeChart(processedData);
       renderChart(processedData);
     });
       console.log('Chart rendered');
@@ -95,6 +99,90 @@
     }
   };
   
+
+  const renderGaugeChart = (data) => {
+  if (!gaugeChart.value) {
+    console.error('仪表盘容器未初始化');
+    return;
+  }
+
+  const temperature = data.iaqi.t?.v || 0; // 获取气温数据
+
+  const myGaugeChart = echarts.init(gaugeChart.value);
+  const option = {
+    series: [
+      {
+        name: '气温',
+        type: 'gauge',
+        radius: '52%',
+        center: ['50%', '50%'], // 仪表盘位置
+        startAngle: 200,
+        endAngle: -20,
+        min: 0,
+        max: 60,
+        splitNumber: 12,
+        itemStyle: {
+          color: 'rgba(255, 150, 0, 0.7)'
+        },
+        progress: {
+          show: true,
+          width: 20
+        },
+        pointer: {
+          show: false
+        },
+        axisLine: {
+          lineStyle: {
+            width: 7,
+            color: [
+              [0.3, '#00BFFF'],
+              [0.7, '#FFA500'],
+              [1, '#FF0000']
+            ],
+          },
+        },
+        axisTick: { 
+          distance: -45,
+          splitNumber: 5,
+          lineStyle: {
+            width: 1,
+            color: '#999'
+          } 
+        },
+        axisLabel: { 
+          distance: -20,
+          color: '#999',
+          fontSize: 10
+        },
+        splitLine: {
+          distance: -52,
+          length: 14,
+          lineStyle: {
+            width: 2,
+            color: '#999'
+          }
+        },
+        anchor: {
+          show: false
+        },
+        detail: {
+          valueAnimation: true,
+          width: '60%',
+          lineHeight: 30,
+          borderRadius: 8,
+          offsetCenter: [0, '-15%'],
+          fontSize: 20,
+          fontWeight: 'bolder',
+          formatter: '{value} °C',
+          color: 'inherit'
+        },
+        data: [{ value: temperature, name: '气温' }],
+      },
+    ],
+  };
+
+  myGaugeChart.setOption(option);
+};
   // 渲染图表
   const renderChart = (data) => {
   
@@ -217,10 +305,16 @@
   margin-bottom: 20px;
 }
 
-.icon {
-  font-size: 160px; /* 图标大小 */
-  margin-right: 20px; /* 图标与右侧信息的间距 */
-  color: #555
+.gauge-container {
+    width: 350px; 
+    height: 350px; 
+    margin-top: 20px;
+}
+
+.gauge-chart {
+    width: 70%;
+    height: 70%;
+    margin-top: 20%;
 }
 
 .icon-with-text {
