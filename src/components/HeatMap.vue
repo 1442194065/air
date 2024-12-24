@@ -152,12 +152,9 @@ export default {
         'co': 4
       }
     }
-    const isHovered = ref(false);
 
-    // 处理鼠标进入事件
-    function handleMouseEnter() {
-    isHovered.value = !isHovered.value;
-    }
+
+    // 处理鼠标进入事
 
     // 读取本地 CSV 文件
     const loadCSVData = async () => {
