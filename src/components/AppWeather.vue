@@ -195,13 +195,7 @@ th {
  .hover-table {
   display: block;
 }
-        border-radius: 12px;
-        max-width: 600px;
-        margin: 20px auto;
-        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 20px;
-        color: #333;
-            }
+
 
     .weather-title {
         font-size: 1.8rem;
