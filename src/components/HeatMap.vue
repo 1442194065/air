@@ -66,37 +66,37 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>PM2.5</td>
-            <td>35</td>
-            <td>75</td>
-          </tr>
-          <tr>
-            <td>PM10</td>
-            <td>50</td>
-            <td>150</td>
-          </tr>
-          <tr>
-            <td>O₃</td>
-            <td>100</td>
-            <td>160</td>
-          </tr>
-          <tr>
-            <td>NO₂</td>
-            <td>80</td>
-            <td>80</td>
-          </tr>
-          <tr>
-            <td>SO₂</td>
-            <td>50</td>
-            <td>150</td>
-          </tr>
-          <tr>
-            <td>CO</td>
-            <td>4</td>
-            <td>4</td>
-          </tr>
-        </tbody>
+                  <tr>
+                    <td>PM2.5(&mu;g/m<sup>3</sup>)</td>
+                    <td>35</td>
+                    <td>75</td>
+                  </tr>
+                  <tr>
+                    <td>PM10(&mu;g/m<sup>3</sup>)</td>
+                    <td>50</td>
+                    <td>150</td>
+                  </tr>
+                  <tr>
+                    <td>O₃(&mu;g/m<sup>3</sup>)</td>
+                    <td>100</td>
+                    <td>160</td>
+                  </tr>
+                  <tr>
+                    <td>NO₂(&mu;g/m<sup>3</sup>)</td>
+                    <td>80</td>
+                    <td>80</td>
+                  </tr>
+                  <tr>
+                    <td>SO₂(mg/m<sup>3</sup>)</td>
+                    <td>50</td>
+                    <td>150</td>
+                  </tr>
+                  <tr>
+                    <td>CO(&mu;g/m<sup>3</sup>)</td>
+                    <td>4</td>
+                    <td>4</td>
+                  </tr>
+                </tbody>
       </table>
     </div>
   </div>

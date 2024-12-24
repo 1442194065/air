@@ -1,58 +1,8 @@
 <!-- src/components/Weather.vue -->
 <template>
     <div v-if="weatherData" class="weather-container">
-        <h2>{{ weatherData.city.name }} 的实时空气质量</h2>
-        <p>空气质量指数（AQI）：{{ weatherData.aqi }}</p>
-        <p>PM2.5：{{ weatherData.iaqi.pm25.v }}</p>
-        <p>更新时间：{{ weatherData.time.s }} ({{ weatherData.time.tz }})</p>
-        <div   class="hover-container">
-            <!-- 按钮 -->
-            <button  @click="handleMouseEnter" class="hover-button">查看标准</button>
-            <!-- 表格 -->
-            <div class="hover-table" v-show="isHovered">
-              <table>
-                <thead>
-                  <tr>
-                    <th>污染物</th>
-                    <th>一级标准</th>
-                    <th>二级标准</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>PM2.5</td>
-                    <td>35</td>
-                    <td>75</td>
-                  </tr>
-                  <tr>
-                    <td>PM10</td>
-                    <td>50</td>
-                    <td>150</td>
-                  </tr>
-                  <tr>
-                    <td>O₃</td>
-                    <td>100</td>
-                    <td>160</td>
-                  </tr>
-                  <tr>
-                    <td>NO₂</td>
-                    <td>80</td>
-                    <td>80</td>
-                  </tr>
-                  <tr>
-                    <td>SO₂</td>
-                    <td>50</td>
-                    <td>150</td>
-                  </tr>
-                  <tr>
-                    <td>CO</td>
-                    <td>4</td>
-                    <td>4</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+
+       
         <h2 class="weather-title">{{ weatherData.city.name }} 的实时空气质量</h2>
         <div class="weather-details">
             <div class="detail-item">
@@ -73,6 +23,54 @@
                 </span>
             </div>
         </div>
+        <div   class="hover-container">
+            <!-- 按钮 -->
+            <button  @click="handleMouseEnter" class="hover-button">查看标准</button>
+            <!-- 表格 -->
+            <div class="hover-table" v-show="isHovered">
+              <table>
+                <thead>
+                  <tr>
+                    <th>污染物</th>
+                    <th>一级标准</th>
+                    <th>二级标准</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>PM2.5(&mu;g/m<sup>3</sup>)</td>
+                    <td>35</td>
+                    <td>75</td>
+                  </tr>
+                  <tr>
+                    <td>PM10(&mu;g/m<sup>3</sup>)</td>
+                    <td>50</td>
+                    <td>150</td>
+                  </tr>
+                  <tr>
+                    <td>O₃(&mu;g/m<sup>3</sup>)</td>
+                    <td>100</td>
+                    <td>160</td>
+                  </tr>
+                  <tr>
+                    <td>NO₂(&mu;g/m<sup>3</sup>)</td>
+                    <td>80</td>
+                    <td>80</td>
+                  </tr>
+                  <tr>
+                    <td>SO₂(mg/m<sup>3</sup>)</td>
+                    <td>50</td>
+                    <td>150</td>
+                  </tr>
+                  <tr>
+                    <td>CO(&mu;g/m<sup>3</sup>)</td>
+                    <td>4</td>
+                    <td>4</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
     </div>
     <div v-else>
         <p>加载中...</p>
