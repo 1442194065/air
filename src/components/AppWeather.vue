@@ -102,9 +102,7 @@
 
 <style scoped>
     .weather-container {
-        padding: 20px;
-        border: 1px solid #ccc;
-        background-color: #f9f9f9;
+        padding: 20px;        
     }
 
 
