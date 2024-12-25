@@ -3,7 +3,7 @@
     class="card"
     style="
       max-width: 800px; 
-
+      margin: 0 auto; /* 自动水平居中 */
       padding: 20px; 
       background-color: rgba(255, 255, 255, 0.6);
       border-radius: 12px; 

@@ -2,13 +2,14 @@
   
   <div
     style="
-      max-width: 600px; 
-      margin-left: 70px;
-      padding: 20px; 
-      background-color: #fff; 
-      border-radius: 8px; 
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-      border: 1px solid #f0f0f0;"
+    max-width: 600px; 
+    margin: 0 auto;
+    padding: 20px; 
+    background-color: rgba(255, 255, 255, 0.6); /* 修改为半透明白色 */
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    border: 1px solid rgba(240, 240, 240, 0.8); /* 更改边框颜色为淡灰色 */
+  "
   >
     <h2>城市空气质量分布图 - 当前城市: {{ displaycity }}</h2>
     <!-- 城市搜索框 -->
