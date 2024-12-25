@@ -277,6 +277,7 @@
         type: 'category',
         data: barData.map((item) => item.name),
         axisLabel: {
+          interval: 0, // 强制显示所有标签  
           color: '#555',
           fontSize: 14,
         },
